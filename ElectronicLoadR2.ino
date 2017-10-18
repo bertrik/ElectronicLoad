@@ -2,6 +2,7 @@
 #include "counter.h"
 #include "current.h"
 #include "print.h"
+#include "pindefs.h"
 
 #include "Arduino.h"
 
@@ -12,7 +13,7 @@ void setup()
     CurrentInit();
     PrintInit();
     
-    pinMode(PC13, OUTPUT);
+    pinMode(PIN_LED, OUTPUT);
 }
 
 static bool EditLine(char cin, char *cout, char line[], int size)

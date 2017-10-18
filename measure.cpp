@@ -1,15 +1,15 @@
+#include "pindefs.h"
 #include "measure.h"
 
 #include "Arduino.h"
-
-#define PIN_MEASURE_A   PA0   
-#define PIN_MEASURE_V   PA2
 
 /**
  * Initialises the measurement system.
  */
 void MeasureInit(void)
 {
+    pinMode(PIN_MEASURE_A, INPUT_ANALOG);
+    pinMode(PIN_MEASURE_V, INPUT_ANALOG);
 }
 
 /**

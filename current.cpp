@@ -1,8 +1,6 @@
+#include "pindefs.h"
 #include "current.h"
 #include "Arduino.h"
-
-// TODO move pin definitions to a common header file
-#define PIN_CURRENT_OUT PA1
 
 void CurrentInit(void)
 {
