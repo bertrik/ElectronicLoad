@@ -2,6 +2,9 @@
 
 #include "Arduino.h"
 
+#define PIN_MEASURE_A   PA0   
+#define PIN_MEASURE_V   PA2
+
 /**
  * Initialises the measurement system.
  */
@@ -19,7 +22,7 @@ void MeasureInit(void)
 void MeasureGet(uint32_t *time, float *current, float *voltage)
 {
     *time = micros();
-    *current = 0;
-    *voltage = 0;
+    *current = 5.0 * analogRead(PIN_MEASURE_A) / 4096;
+    *voltage = 19.8 * analogRead(PIN_MEASURE_V) / 4096;
 }
 
