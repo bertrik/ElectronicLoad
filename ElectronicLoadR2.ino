@@ -1,6 +1,7 @@
 #include "measure.h"
 #include "counter.h"
 #include "current.h"
+#include "print.h"
 
 #include "Arduino.h"
 
@@ -9,8 +10,8 @@ void setup()
     MeasureInit();
     CounterInit();
     CurrentInit();
+    PrintInit();
     
-    Serial.begin();
     pinMode(PC13, OUTPUT);
 }
 
@@ -66,16 +67,7 @@ void loop()
     if (haveLine) {
         // status
         if (strncmp(line, "s", 2) == 0) {
-            Serial.print("current=");
-            Serial.print(current, 3);
-            Serial.print(", voltage=");
-            Serial.print(voltage, 3);
-            Serial.print(", power=");
-            Serial.print(power, 3);
-            Serial.print(", charge=");
-            Serial.print(charge, 3);
-            Serial.print(", energy=");
-            Serial.println(energy, 3);
+            print("I=%.3f A, V=%.3f V, P=%.3f W, Q=%.3f C, E=%.3f J\n", current, voltage, power, charge, energy);
         }
     }
 }
