@@ -17,7 +17,7 @@ static TIntegrator energy;
 static void integrate(TIntegrator *state, uint32_t timestamp, float value)
 {
     float average = (value + state->last_value) / 2;
-    float sum = average * (timestamp - state->last_time);
+    float sum = average * (timestamp - state->last_time) * 1E-6;
     state->integrated += sum;
     state->last_time = timestamp;
     state->last_value = value;
