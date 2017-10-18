@@ -1,5 +1,6 @@
 #include "measure.h"
 #include "counter.h"
+#include "current.h"
 
 #include "Arduino.h"
 
@@ -7,6 +8,7 @@ void setup()
 {
     MeasureInit();
     CounterInit();
+    CurrentInit();
     
     Serial.begin();
     pinMode(PC13, OUTPUT);
