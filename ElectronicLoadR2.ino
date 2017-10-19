@@ -3,15 +3,17 @@
 #include "current.h"
 #include "print.h"
 #include "pindefs.h"
+#include "control.h"
 
 #include "Arduino.h"
 
 void setup()
 {
+    PrintInit();
     MeasureInit();
     CounterInit();
     CurrentInit();
-    PrintInit();
+    ControlInit();
     
     pinMode(PIN_LED, OUTPUT);
 }
@@ -60,6 +62,8 @@ void loop()
     CounterEnergyUpdate(time, power);
     float charge = CounterChargeGet();
     float energy = CounterEnergyGet();
+
+    ControlTick(time, current, voltage, power);
 
     if (Serial.available()) {        // read from serial until return
         haveLine = EditLine(Serial.read(), &c, line, sizeof(line));
