@@ -5,6 +5,7 @@
 #include "pindefs.h"
 #include "control.h"
 #include "cmdproc.h"
+#include "led.h"
 
 #include "Arduino.h"
 
@@ -15,12 +16,11 @@ static float curset;
 void setup()
 {
     PrintInit();
+    LedInit();
     MeasureInit();
     CounterInit();
     CurrentInit();
     ControlInit();
-    
-    pinMode(PIN_LED, OUTPUT);
 }
 
 static bool EditLine(char cin, char *cout, char line[], int size)
@@ -138,6 +138,7 @@ void loop()
     energy = CounterEnergyGet();
 
     ControlTick(time, current, voltage, power);
+    LedUpdate(time, charge, energy);
 
     if (Serial.available()) {        // read from serial until return
         haveLine = EditLine(Serial.read(), &c, line, sizeof(line));
