@@ -56,7 +56,7 @@ static int do_cc(int argc, char *argv[])
         return -1;
     }
     int ma = atoi(argv[1]);
-    print("Constant current %d mA\n", ma);
+    print("Set constant current mode %d mA\n", ma);
     ControlSetMode(CC, ma / 1000.0);
     return 0;
 }
@@ -68,7 +68,7 @@ static int do_cp(int argc, char *argv[])
         return -1;
     }
     int mw = atoi(argv[1]);
-    print("Constant power %d mW\n", mw);
+    print("Set constant power mode %d mW\n", mw);
     ControlSetMode(CP, mw / 1000.0);
     return 0;
 }
@@ -80,8 +80,14 @@ static int do_cr(int argc, char *argv[])
         return -1;
     }
     int ohm = atoi(argv[1]);
-    print("Constant resistance %d mA\n", ohm);
+    print("Set constant resistance mode %d ohm\n", ohm);
     ControlSetMode(CR, ohm);
+    return 0;
+}
+
+static int do_off(int argc, char *argv[])
+{
+    ControlSetMode(OFF, 0);
     return 0;
 }
 
@@ -90,6 +96,7 @@ const cmd_t commands[] = {
     {"cc",      do_cc,      "<mA>, sets constant current mode"},
     {"cp",      do_cp,      "<mW>, sets constant power mode"},
     {"cr",      do_cr,      "<ohm>, sets constant resistance mode"},
+    {"off",     do_off,     "Turn current off"},
     {NULL, NULL, NULL}
 };
 
@@ -133,10 +140,10 @@ void loop()
             print("Unknown command!");
             break;
         default:
-            print("%d", result);
+            print("%d\n", result);
             break;
         }
-        print("\n%s>", ControlGetModeString());
+        print("%s>", ControlGetModeString());
     }
 }
 
