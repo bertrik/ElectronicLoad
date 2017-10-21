@@ -2,5 +2,6 @@
 
 
 void CurrentInit(void);
-void CurrentSetValue(float current);
+float CurrentSetValue(float current);
+float CurrentGetValue(void);
 
