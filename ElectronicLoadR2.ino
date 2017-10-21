@@ -8,6 +8,10 @@
 
 #include "Arduino.h"
 
+static unsigned long time;
+static float current, voltage, power, charge, energy;
+static float curset;
+
 void setup()
 {
     PrintInit();
@@ -91,12 +95,21 @@ static int do_off(int argc, char *argv[])
     return 0;
 }
 
+static int do_status(int argc, char *argv[])
+{
+    print("T=%4.6f,Iset=%2.3f A,I=%2.3f A,V=%2.3f V,P=%2.3f W,Q=%.0f mAh,E=%.0f mWh\n",
+        time / 1E6, curset, current, voltage, power, charge / 3.6, energy / 3.6);
+
+    return 0;
+}
+
 const cmd_t commands[] = {
     {"help",    do_help,    "Shows help"},
     {"cc",      do_cc,      "<mA>, sets constant current mode"},
     {"cp",      do_cp,      "<mW>, sets constant power mode"},
     {"cr",      do_cr,      "<ohm>, sets constant resistance mode"},
     {"off",     do_off,     "Turn current off"},
+    {"s",       do_status,  "Show status"},
     {NULL, NULL, NULL}
 };
 
@@ -112,13 +125,12 @@ static char line[80];
 
 void loop()
 {
-    uint32_t time;
-    float current, voltage;
     char c;
     bool haveLine = false;
     
+    curset = CurrentGetValue();
     MeasureGet(&time, &current, &voltage);
-    float power = current * voltage;
+    power = current * voltage;
     
     CounterChargeUpdate(time, current);
     CounterEnergyUpdate(time, power);
