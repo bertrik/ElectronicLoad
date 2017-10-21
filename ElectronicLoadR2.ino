@@ -112,7 +112,7 @@ static int do_led(int argc, char *argv[])
         {"off",     E_LEDMODE_OFF},
         {"on",      E_LEDMODE_ON},
         {"time",    E_LEDMODE_TIME},
-        {"charge",  E_LEDMODE_CHARGE}
+        {"charge",  E_LEDMODE_CHARGE},
         {NULL, E_LEDMODE_OFF}
     };
 

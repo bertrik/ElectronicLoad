@@ -22,12 +22,6 @@ void LedSetMode(ELedMode newMode)
     case E_LEDMODE_OFF:
         digitalWrite(PIN_LED, 1);
         break;
-    case E_LEDMODE_TIME:
-        unit = 500000;
-        break;
-    case E_LEDMODE_CHARGE:
-        unit = 0.1;
-        break;
     default:
         break;
     }
