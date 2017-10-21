@@ -1,8 +1,10 @@
 #include "current.h"
 #include "control.h"
 
+#include <Arduino.h>
+
 static EControlMode mode;
-static int targetValue;
+static float targetValue;
 
 void ControlInit(void)
 {
@@ -15,7 +17,7 @@ static void UpdateCurrent(float desired)
     CurrentSetValue(desired);
 }
 
-void ControlSetMode(EControlMode newMode, int newTarget)
+void ControlSetMode(EControlMode newMode, float newTarget)
 {
     mode = newMode;
     targetValue = newTarget;
@@ -50,11 +52,8 @@ void ControlTick(uint32_t micros, float current, float voltage, float power)
 
     switch (mode) {
     case OFF:
-        // nothing to do
-        break;
     case CC:
-        // nothing to do, CC is done in hardware
-        UpdateCurrent(targetValue);
+        // nothing to do
         break;
     case CP:
         // calculate current for desired power
@@ -68,6 +67,7 @@ void ControlTick(uint32_t micros, float current, float voltage, float power)
         break;
     default:
         // should not come here
+        mode = OFF;
         break;
     }
 }

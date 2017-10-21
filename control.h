@@ -12,11 +12,8 @@ typedef enum {
 } EControlMode;
 
 void ControlInit(void);
-
-void ControlSetMode(EControlMode newMode, int newTarget);
-
+void ControlSetMode(EControlMode newMode, float newTarget);
 const char *ControlGetModeString(void);
-
 void ControlTick(uint32_t micros, float current, float voltage, float power);
 
 
