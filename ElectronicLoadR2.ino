@@ -134,8 +134,8 @@ void loop()
     
     CounterChargeUpdate(time, current);
     CounterEnergyUpdate(time, power);
-    float charge = CounterChargeGet();
-    float energy = CounterEnergyGet();
+    charge = CounterChargeGet();
+    energy = CounterEnergyGet();
 
     ControlTick(time, current, voltage, power);
 
