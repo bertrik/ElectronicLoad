@@ -6,6 +6,7 @@
 #include "control.h"
 #include "cmdproc.h"
 #include "led.h"
+#include "safety.h"
 
 #include "Arduino.h"
 
@@ -21,6 +22,7 @@ void setup()
     CounterInit();
     CurrentInit();
     ControlInit();
+    SafetyInit();
 }
 
 static bool EditLine(char cin, char *cout, char line[], int size)
@@ -173,6 +175,7 @@ void loop()
     energy = CounterEnergyGet();
 
     ControlTick(time, current, voltage, power);
+    SafetyTick(current, power);
     LedUpdate(time, charge, energy);
 
     if (Serial.available()) {        // read from serial until return
