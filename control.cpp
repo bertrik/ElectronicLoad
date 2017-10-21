@@ -32,6 +32,17 @@ void ControlSetMode(EControlMode newMode, int newTarget)
     }
 }
 
+const char *ControlGetModeString(void)
+{
+    switch (mode) {
+    case OFF:   return "OFF";
+    case CC:    return "CC";
+    case CP:    return "CP";
+    case CR:    return "CR";
+    default:    return "?";
+    }
+}
+
 /** runs the control process */
 void ControlTick(uint32_t micros, float current, float voltage, float power)
 {

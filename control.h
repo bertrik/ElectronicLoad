@@ -15,6 +15,8 @@ void ControlInit(void);
 
 void ControlSetMode(EControlMode newMode, int newTarget);
 
+const char *ControlGetModeString(void);
+
 void ControlTick(uint32_t micros, float current, float voltage, float power);
 
 
