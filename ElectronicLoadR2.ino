@@ -105,6 +105,14 @@ static int do_status(int argc, char *argv[])
     return 0;
 }
 
+static int do_reset(int argc, char *argv[])
+{
+    print("Resetting counters.\n");
+    CounterChargeReset();
+    CounterEnergyReset();
+    return 0;
+}
+
 static int do_led(int argc, char *argv[])
 {
     struct TLedMode {
@@ -140,13 +148,14 @@ static int do_led(int argc, char *argv[])
 }
 
 const cmd_t commands[] = {
-    {"help",    do_help,    "Shows help"},
-    {"cc",      do_cc,      "<mA>, sets constant current mode"},
-    {"cp",      do_cp,      "<mW>, sets constant power mode"},
-    {"cr",      do_cr,      "<ohm>, sets constant resistance mode"},
+    {"help",    do_help,    "Show help"},
+    {"cc",      do_cc,      "<mA>, set constant current mode"},
+    {"cp",      do_cp,      "<mW>, set constant power mode"},
+    {"cr",      do_cr,      "<ohm>, set constant resistance mode"},
     {"off",     do_off,     "Turn current off"},
     {"s",       do_status,  "Show status"},
     {"led",     do_led,     "<mode> Set LED mode"},
+    {"reset",   do_reset,   "Reset charge/energy counters"},
     {NULL, NULL, NULL}
 };
 
@@ -185,10 +194,13 @@ void loop()
     if (haveLine) {
         int result = cmd_process(commands, line);
         switch (result) {
+        case CMD_OK:
+            print("OK\n");
+            break;
         case CMD_NO_CMD:
             break;
         case CMD_UNKNOWN:
-            print("Unknown command!");
+            print("Unknown command!\n");
             break;
         default:
             print("%d\n", result);
