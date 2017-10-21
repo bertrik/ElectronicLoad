@@ -4,6 +4,7 @@
 #include "print.h"
 #include "pindefs.h"
 #include "control.h"
+#include "cmdproc.h"
 
 #include "Arduino.h"
 
@@ -46,6 +47,60 @@ static bool EditLine(char cin, char *cout, char line[], int size)
     return false;
 }
 
+static int do_help(int argc, char *argv[]);
+
+static int do_cc(int argc, char *argv[])
+{
+    if (argc != 2) {
+        print("Please specify a current!\n");
+        return -1;
+    }
+    int ma = atoi(argv[1]);
+    print("Constant current %d mA\n", ma);
+    ControlSetMode(CC, ma / 1000.0);
+    return 0;
+}
+
+static int do_cp(int argc, char *argv[])
+{
+    if (argc != 2) {
+        print("Please specify a power!\n");
+        return -1;
+    }
+    int mw = atoi(argv[1]);
+    print("Constant power %d mW\n", mw);
+    ControlSetMode(CP, mw / 1000.0);
+    return 0;
+}
+
+static int do_cr(int argc, char *argv[])
+{
+    if (argc != 2) {
+        print("Please specify a resistance!\n");
+        return -1;
+    }
+    int ohm = atoi(argv[1]);
+    print("Constant resistance %d mA\n", ohm);
+    ControlSetMode(CR, ohm);
+    return 0;
+}
+
+const cmd_t commands[] = {
+    {"help",    do_help,    "Shows help"},
+    {"cc",      do_cc,      "<mA>, sets constant current mode"},
+    {"cp",      do_cp,      "<mW>, sets constant power mode"},
+    {"cr",      do_cr,      "<ohm>, sets constant resistance mode"},
+    {NULL, NULL, NULL}
+};
+
+static int do_help(int argc, char *argv[])
+{
+    for (const cmd_t *cmd = commands; cmd->cmd != NULL; cmd++) {
+        print("%10s: %s\n", cmd->name, cmd->help);
+    }
+    return 0;
+}
+
 static char line[80];
 
 void loop()
@@ -70,10 +125,18 @@ void loop()
         Serial.print(c);
     }
     if (haveLine) {
-        // status
-        if (strncmp(line, "s", 2) == 0) {
-            print("I=%.3f A, V=%.3f V, P=%.3f W, Q=%.3f C, E=%.3f J\n", current, voltage, power, charge, energy);
+        int result = cmd_process(commands, line);
+        switch (result) {
+        case CMD_NO_CMD:
+            break;
+        case CMD_UNKNOWN:
+            print("Unknown command!");
+            break;
+        default:
+            print("%d", result);
+            break;
         }
+        print("\n%s>", ControlGetModeString());
     }
 }
 
