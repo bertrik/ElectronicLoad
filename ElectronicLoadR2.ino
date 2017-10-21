@@ -103,6 +103,40 @@ static int do_status(int argc, char *argv[])
     return 0;
 }
 
+static int do_led(int argc, char *argv[])
+{
+    struct TLedMode {
+        const char *name;
+        ELedMode mode;
+    } modes[] = {
+        {"off",     E_LEDMODE_OFF},
+        {"on",      E_LEDMODE_ON},
+        {"time",    E_LEDMODE_TIME},
+        {"charge",  E_LEDMODE_CHARGE}
+        {NULL, E_LEDMODE_OFF}
+    };
+
+    if (argc != 2) {
+        print("Please specify a LED mode, possible values:");
+        for (struct TLedMode *mode = modes; mode->name != NULL; mode++) {
+            print(" %s", mode->name);
+        }
+        print("\n");
+        return -1;
+    }
+
+    for (struct TLedMode *mode = modes; mode->name != NULL; mode++) {
+        if (strcmp(argv[1], mode->name) == 0) {
+            print("Setting LED mode %s\n", mode->name);
+            LedSetMode(mode->mode);
+            return 0;
+        }
+    }
+    
+    print("Unknown LED mode '%s'!\n", argv[1]);
+    return -1;
+}
+
 const cmd_t commands[] = {
     {"help",    do_help,    "Shows help"},
     {"cc",      do_cc,      "<mA>, sets constant current mode"},
@@ -110,6 +144,7 @@ const cmd_t commands[] = {
     {"cr",      do_cr,      "<ohm>, sets constant resistance mode"},
     {"off",     do_off,     "Turn current off"},
     {"s",       do_status,  "Show status"},
+    {"led",     do_led,     "<mode> Set LED mode"},
     {NULL, NULL, NULL}
 };
 

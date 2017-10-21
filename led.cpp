@@ -4,13 +4,10 @@
 #include "led.h"
 
 static ELedMode mode;
-static float unit;
 
 void LedInit(void)
 {
     pinMode(PIN_LED, OUTPUT);
-    digitalWrite(PIN_LED, 0);
-    
     LedSetMode(E_LEDMODE_TIME);
 }
 
@@ -20,19 +17,16 @@ void LedSetMode(ELedMode newMode)
     
     switch (mode) {
     case E_LEDMODE_ON:
-        digitalWrite(PIN_LED, 1);
+        digitalWrite(PIN_LED, 0);
         break;
     case E_LEDMODE_OFF:
-        digitalWrite(PIN_LED, 0);
+        digitalWrite(PIN_LED, 1);
         break;
     case E_LEDMODE_TIME:
         unit = 500000;
         break;
     case E_LEDMODE_CHARGE:
-        unit = 0.01;
-        break;
-    case E_LEDMODE_ENERGY:
-        unit = 0.001;
+        unit = 0.1;
         break;
     default:
         break;
@@ -45,14 +39,13 @@ void LedUpdate(unsigned long int time, float charge, float energy)
 
     switch (mode) {
     case E_LEDMODE_TIME:
-        tick = time / unit;
+        tick = time / 500000;
         break;
     case E_LEDMODE_CHARGE:
-        tick = charge / unit;
+        tick = charge / 0.1;
         break;
-    case E_LEDMODE_ENERGY:
-        tick = energy / unit;
-        break;
+    case E_LEDMODE_OFF:
+    case E_LEDMODE_ON:
     default:
         // do nothing
         return;
