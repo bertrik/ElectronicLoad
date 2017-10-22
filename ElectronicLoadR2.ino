@@ -12,8 +12,9 @@
 #include "Arduino.h"
 
 static unsigned long time;
-static float current, voltage, power, charge, energy;
 static float curset;
+static float current, voltage, power;
+static double charge, energy;
 static char line[128];
 
 void setup()

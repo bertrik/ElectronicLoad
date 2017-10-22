@@ -9,9 +9,9 @@ void CounterInit(void);
 
 void CounterChargeReset(void);
 void CounterChargeUpdate(uint32_t timestamp, float current);
-float CounterChargeGet(void);
+double CounterChargeGet(void);
 
 void CounterEnergyReset(void);
 void CounterEnergyUpdate(uint32_t timestamp, float power);
-float CounterEnergyGet(void);
+double CounterEnergyGet(void);
 

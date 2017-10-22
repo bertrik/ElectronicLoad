@@ -5,7 +5,7 @@
 #include "counter.h"
 
 typedef struct {
-    float       integrated;
+    double      integrated;
     uint32_t    last_time;
     float       last_value;
 } TIntegrator;
@@ -47,7 +47,7 @@ void CounterChargeUpdate(uint32_t timestamp, float current)
     integrate(&charge, timestamp, current);
 }
 
-float CounterChargeGet(void)
+double CounterChargeGet(void)
 {
     return charge.integrated;
 }
@@ -62,7 +62,7 @@ void CounterEnergyUpdate(uint32_t timestamp, float power)
     integrate(&energy, timestamp, power);
 }
 
-float CounterEnergyGet(void)
+double CounterEnergyGet(void)
 {
     return energy.integrated;
 }
