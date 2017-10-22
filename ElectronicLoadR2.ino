@@ -97,7 +97,7 @@ static int do_led(int argc, char *argv[])
         {"off",     E_LEDMODE_OFF},
         {"on",      E_LEDMODE_ON},
         {"time",    E_LEDMODE_TIME},
-        {"charge",  E_LEDMODE_CHARGE},
+        {"current", E_LEDMODE_CURRENT},
         {NULL, E_LEDMODE_OFF}
     };
 
@@ -112,7 +112,7 @@ static int do_led(int argc, char *argv[])
 
     for (struct TLedMode *mode = modes; mode->name != NULL; mode++) {
         if (strcmp(argv[1], mode->name) == 0) {
-            print("Setting LED mode %s\n", mode->name);
+            print("Setting LED mode '%s' (blink frequency depends on %s)\n", mode->name, mode->name);
             LedSetMode(mode->mode);
             return 0;
         }

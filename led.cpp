@@ -35,7 +35,7 @@ void LedUpdate(unsigned long int time, float charge, float energy)
     case E_LEDMODE_TIME:
         tick = time / 500000;
         break;
-    case E_LEDMODE_CHARGE:
+    case E_LEDMODE_CURRENT:
         tick = charge / 0.1;
         break;
     case E_LEDMODE_OFF:
