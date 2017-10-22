@@ -7,50 +7,25 @@
 #include "cmdproc.h"
 #include "led.h"
 #include "safety.h"
+#include "editline.h"
 
 #include "Arduino.h"
 
 static unsigned long time;
 static float current, voltage, power, charge, energy;
 static float curset;
+static char line[128];
 
 void setup()
 {
     PrintInit();
+    EditInit(line, sizeof(line));
     LedInit();
     MeasureInit();
     CounterInit();
     CurrentInit();
     ControlInit();
     SafetyInit();
-}
-
-static bool EditLine(char cin, char *cout, char line[], int size)
-{
-    static int pos = 0;
-    *cout = cin;                // echo by default
-    switch (cin) {              // carriage return is ignored
-    case '\r':
-        break;
-    case '\n':                 // end-of-line
-        line[pos] = '\0';
-        pos = 0;
-        return true;
-    case 0x7F:
-    case 0x08:                 // backspace
-        if (pos > 0) {
-            pos--;
-        }
-        break;
-    default:
-        if (pos < (size - 1)) { // store char as long as there is space to do so
-            line[pos++] = cin;
-        } else {
-            *cout = 0x07;       // bell
-        }
-        break;
-    }
-    return false;
 }
 
 static int do_help(int argc, char *argv[]);
@@ -167,8 +142,6 @@ static int do_help(int argc, char *argv[])
     return 0;
 }
 
-static char line[80];
-
 void loop()
 {
     char c;
@@ -187,8 +160,8 @@ void loop()
     SafetyTick(current, power);
     LedUpdate(time, charge, energy);
 
-    if (Serial.available()) {        // read from serial until return
-        haveLine = EditLine(Serial.read(), &c, line, sizeof(line));
+    if (Serial.available()) {
+        haveLine = EditLine(Serial.read(), &c);
         Serial.print(c);
     }
     if (haveLine) {
