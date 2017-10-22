@@ -16,9 +16,10 @@ typedef struct {
 } cmd_t;
 
 /**
- * parses the given line into arguments
- * matches it with a command in the command table and
- * executes the command
+ * Parses the given line into arguments, matches it with a command and executes the command.
+ * @param[in] commands command table
+ * @param[in] line the line to parse
+ * @return the result of command execution
  */
 int cmd_process(const cmd_t *commands, char *line);
 
