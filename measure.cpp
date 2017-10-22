@@ -19,7 +19,7 @@ void MeasureInit(void)
  * @param[out] the current (amperes)
  * @param[out] the voltage (volts)
  */
-void MeasureGet(uint32_t *time, float *current, float *voltage)
+void MeasureGet(unsigned long *time, float *current, float *voltage)
 {
     *time = micros();
     *current = 5.0 * analogRead(PIN_MEASURE_A) / 4096;
