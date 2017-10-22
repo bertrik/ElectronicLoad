@@ -29,6 +29,13 @@ void setup()
     SafetyInit();
 }
 
+static void show_help(const cmd_t *cmds)
+{
+    for (const cmd_t *cmd = cmds; cmd->cmd != NULL; cmd++) {
+        print("%10s: %s\n", cmd->name, cmd->help);
+    }
+}
+
 static int do_help(int argc, char *argv[]);
 
 static int do_cc(int argc, char *argv[])
@@ -138,9 +145,7 @@ const cmd_t commands[] = {
 
 static int do_help(int argc, char *argv[])
 {
-    for (const cmd_t *cmd = commands; cmd->cmd != NULL; cmd++) {
-        print("%10s: %s\n", cmd->name, cmd->help);
-    }
+    show_help(commands);
     return 0;
 }
 
@@ -175,7 +180,8 @@ void loop()
         case CMD_NO_CMD:
             break;
         case CMD_UNKNOWN:
-            print("Unknown command!\n");
+            print("Unknown command, available commands:\n");
+            show_help(commands);
             break;
         default:
             print("%d\n", result);
