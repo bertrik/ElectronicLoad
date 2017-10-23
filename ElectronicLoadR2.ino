@@ -8,6 +8,7 @@
 #include "led.h"
 #include "safety.h"
 #include "editline.h"
+#include "logging.h"
 
 #include "Arduino.h"
 
@@ -27,6 +28,7 @@ void setup()
     CurrentInit();
     ControlInit();
     SafetyInit();
+    LoggingInit();
 }
 
 static void show_help(const cmd_t *cmds)
@@ -47,6 +49,7 @@ static int do_cc(int argc, char *argv[])
     int ma = atoi(argv[1]);
     print("Set constant current mode %d mA\n", ma);
     ControlSetMode(CC, ma / 1000.0);
+    LoggingOn(500);
     return 0;
 }
 
@@ -59,6 +62,7 @@ static int do_cp(int argc, char *argv[])
     int mw = atoi(argv[1]);
     print("Set constant power mode %d mW\n", mw);
     ControlSetMode(CP, mw / 1000.0);
+    LoggingOn(500);
     return 0;
 }
 
@@ -71,12 +75,14 @@ static int do_cr(int argc, char *argv[])
     int ohm = atoi(argv[1]);
     print("Set constant resistance mode %d ohm\n", ohm);
     ControlSetMode(CR, ohm);
+    LoggingOn(500);
     return 0;
 }
 
 static int do_off(int argc, char *argv[])
 {
     ControlSetMode(OFF, 0);
+    LoggingOff();
     return 0;
 }
 
@@ -131,6 +137,21 @@ static int do_led(int argc, char *argv[])
     return -1;
 }
 
+static int do_log(int argc, char *argv[])
+{
+    if (argc != 2) {
+        print("Please specify a logging interval (0 to stop)\n");
+        return -1;
+    }
+    int interval = atoi(argv[1]);
+    if (interval > 0) {
+        LoggingOn(interval);
+    } else {
+        LoggingOff();
+    }
+    return 0;
+}
+
 const cmd_t commands[] = {
     {"help",    do_help,    "Show help"},
     {"cc",      do_cc,      "<mA>, set constant current mode"},
@@ -140,6 +161,7 @@ const cmd_t commands[] = {
     {"s",       do_status,  "Show status"},
     {"led",     do_led,     "<mode> Set LED mode"},
     {"reset",   do_reset,   "Reset charge/energy counters"},
+    {"log",     do_log,     "<interval> Starts logging with <interval> ms"},
     {NULL, NULL, NULL}
 };
 
@@ -166,6 +188,7 @@ void loop()
     ControlTick(time, current, voltage, power);
     SafetyTick(current, power);
     LedUpdate(time, charge, energy);
+    LoggingUpdate(time, curset, current, voltage, power, charge, energy);
 
     if (Serial.available()) {
         haveLine = EditLine(Serial.read(), &c);
