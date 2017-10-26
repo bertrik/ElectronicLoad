@@ -1,29 +1,70 @@
 #include <stdbool.h>
-
-#include "control.h"
-#include "print.h"
+#include "safety.h"
 
 #define MAX_CURRENT 5.0
-#define MAX_POWER   15.0
+#define MAX_POWER   22.0
+#define MAX_VOLTAGE 19.8
+
+static float max_current;
+static float max_power;
+static float min_voltage;
 
 void SafetyInit(void)
 {
-    // nothing to do here yet
+    max_current = MAX_CURRENT;
+    max_power = 15.0;
+    min_voltage = 1.0;
 }
 
-bool SafetyTick(float current, float power)
+static float constrain(float min, float max, float value)
 {
-    if (current > MAX_CURRENT) {
-        print("Safety engaged, current limit!\n");
-        ControlSetMode(OFF, 0);
-        return true;
+    if (value < min) {
+        return min;
+    } else if (value < max) {
+        return value;
+    } else {
+        return max;
     }
-    if (power > MAX_POWER) {
-        print("Safety engaged, power limit!\n");
-        ControlSetMode(OFF, 0);
-        return true;
+}
+
+float SafetySetMaxCurrent(float current)
+{
+    max_current = constrain(0.0, MAX_CURRENT, current);
+    return max_current;
+}
+
+float SafetySetMaxPower(float power)
+{
+    max_power = constrain(0.0, MAX_POWER, power);
+    return max_power;
+}
+
+float SafetySetMinVoltage(float voltage)
+{
+    min_voltage = constrain(0.0, MAX_VOLTAGE, voltage);
+    return min_voltage;
+}
+
+float SafetyTick(float current, float voltage)
+{
+    float cur_out = current;
+    
+    // constrain power
+    float power = voltage * cur_out;
+    if (power > max_power) {
+        cur_out = max_power / voltage;
     }
     
-    return false;
+    // constrain current
+    if (cur_out > max_current) {
+        cur_out = max_current;
+    }
+    
+    // constrain voltage
+    if (voltage < min_voltage) {
+        cur_out = 0.0;
+    }
+
+    return cur_out;    
 }
 

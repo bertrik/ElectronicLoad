@@ -176,7 +176,6 @@ void loop()
     char c;
     bool haveLine = false;
     
-    curset = CurrentGetValue();
     MeasureGet(&time, &current, &voltage);
     power = current * voltage;
     
@@ -185,8 +184,14 @@ void loop()
     charge = CounterChargeGet();
     energy = CounterEnergyGet();
 
-    ControlTick(time, current, voltage, power);
-    SafetyTick(current, power);
+    curset = ControlTick(time, current, voltage, power);
+    float cursafe = SafetyTick(curset, voltage);
+    if (curset > cursafe) {
+        // TODO show some kind of warning, but limit it in time (e.g. only once per second)
+        curset = cursafe;
+    }
+    CurrentSetValue(curset);
+    
     LedUpdate(time, charge, energy);
     LoggingUpdate(time, curset, current, voltage, power, charge, energy);
 

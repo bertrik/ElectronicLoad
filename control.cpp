@@ -1,4 +1,3 @@
-#include "current.h"
 #include "control.h"
 
 #include <Arduino.h>
@@ -11,27 +10,10 @@ void ControlInit(void)
     ControlSetMode(OFF, 0.0);
 }
 
-static void UpdateCurrent(float desired)
-{
-    // perhaps run some kind of loop filter here?
-    CurrentSetValue(desired);
-}
-
 void ControlSetMode(EControlMode newMode, float newTarget)
 {
     mode = newMode;
     targetValue = newTarget;
-
-    switch (mode) {
-    case OFF:
-        CurrentSetValue(0.0);
-        break;
-    case CC:
-        CurrentSetValue(targetValue);
-        break;
-    default:
-        break;
-    }
 }
 
 const char *ControlGetModeString(void)
@@ -46,29 +28,27 @@ const char *ControlGetModeString(void)
 }
 
 /** runs the control process */
-void ControlTick(uint32_t micros, float current, float voltage, float power)
+float ControlTick(uint32_t micros, float current, float voltage, float power)
 {
     float desired;
 
     switch (mode) {
     case OFF:
+        return 0.0;
     case CC:
-        // nothing to do
-        break;
+        return targetValue;
     case CP:
         // calculate current for desired power
         desired = (targetValue / voltage);
-        UpdateCurrent(desired);
-        break;
+        return desired;
     case CR:
         // calculate current for desired resistance emulation
         desired = (voltage / targetValue);
-        UpdateCurrent(desired);
-        break;
+        return desired;
     default:
         // should not come here
         mode = OFF;
-        break;
+        return 0.0;
     }
 }
 
