@@ -28,7 +28,7 @@ const char *ControlGetModeString(void)
 }
 
 /** runs the control process */
-float ControlTick(uint32_t micros, float current, float voltage, float power)
+float ControlTick(uint32_t micros, float current, float voltage)
 {
     float desired;
 

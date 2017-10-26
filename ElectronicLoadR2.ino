@@ -184,7 +184,7 @@ void loop()
     charge = CounterChargeGet();
     energy = CounterEnergyGet();
 
-    curset = ControlTick(time, current, voltage, power);
+    curset = ControlTick(time, current, voltage);
     float cursafe = SafetyTick(curset, voltage);
     if (curset > cursafe) {
         // TODO show some kind of warning, but limit it in time (e.g. only once per second)

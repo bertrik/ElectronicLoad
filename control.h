@@ -33,10 +33,9 @@ const char *ControlGetModeString(void);
  * @param[in] micros the current time in microseconds
  * @param[in] current the actual current in amperes
  * @param[in] voltage the actual voltage in volts
- * @param[in] power the actual power in Watts
  * @return the desired output current
  */ 
-float ControlTick(uint32_t micros, float current, float voltage, float power);
+float ControlTick(uint32_t micros, float current, float voltage);
 
 
 
