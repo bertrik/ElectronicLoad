@@ -2,7 +2,7 @@
 #include "counter.h"
 #include "current.h"
 #include "print.h"
-#include "pindefs.h"
+#include "hwdefs.h"
 #include "control.h"
 #include "cmdproc.h"
 #include "led.h"

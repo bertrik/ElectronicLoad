@@ -1,4 +1,4 @@
-#include "pindefs.h"
+#include "hwdefs.h"
 #include "current.h"
 #include "Arduino.h"
 

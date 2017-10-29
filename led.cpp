@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "pindefs.h"
+#include "hwdefs.h"
 #include "led.h"
 
 static ELedMode mode;

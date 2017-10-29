@@ -1,4 +1,4 @@
-#include "pindefs.h"
+#include "hwdefs.h"
 #include "measure.h"
 
 #include "Arduino.h"

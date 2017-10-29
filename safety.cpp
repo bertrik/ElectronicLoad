@@ -1,9 +1,6 @@
 #include <stdbool.h>
 #include "safety.h"
-
-#define MAX_CURRENT 5.0
-#define MAX_POWER   22.0
-#define MAX_VOLTAGE 19.8
+#include "hwdefs.h"
 
 static float max_current;
 static float max_power;
