@@ -45,6 +45,13 @@ float SafetySetMinVoltage(float voltage)
     return min_voltage;
 }
 
+void SafetyGetLimits(float *current, float *power, float *voltage)
+{
+    *current = max_current;
+    *power = max_power;
+    *voltage = min_voltage;
+}
+
 float SafetyTick(float current, float voltage)
 {
     float cur_out = current;

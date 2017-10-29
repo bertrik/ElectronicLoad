@@ -14,3 +14,5 @@ float SafetySetMaxCurrent(float current);
 float SafetySetMaxPower(float power);
 float SafetySetMinVoltage(float voltage);
 
+void SafetyGetLimits(float *current, float *power, float *voltage);
+
