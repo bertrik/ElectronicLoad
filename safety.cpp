@@ -9,7 +9,7 @@ static float min_voltage;
 void SafetyInit(void)
 {
     max_current = MAX_CURRENT;
-    max_power = 22.0;
+    max_power = 21.0;
     min_voltage = 1.0;
 }
 
