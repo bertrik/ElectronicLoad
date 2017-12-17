@@ -9,6 +9,7 @@
 #include "safety.h"
 #include "editline.h"
 #include "logging.h"
+#include "calibrate.h"
 
 #include "Arduino.h"
 
@@ -20,6 +21,8 @@ static char line[128];
 
 void setup()
 {
+    TMeasureCal cal;
+
     PrintInit();
     EditInit(line, sizeof(line));
     LedInit();
@@ -29,6 +32,11 @@ void setup()
     ControlInit();
     SafetyInit();
     LoggingInit();
+    
+    CalInit();
+    if (CalRead(&cal, sizeof(cal))) {
+        MeasureCal(&cal);
+    }
 }
 
 static void show_help(const cmd_t *cmds)
@@ -163,17 +171,17 @@ static int do_limit(int argc, char *argv[])
     char type = argv[1][0];
     int value = atoi(argv[2]);
     switch (type) {
-    case 'c':
+    case 'i':
         print("Setting max current limit to %d mA\n", value);
         SafetySetMaxCurrent(value / 1000.0);
-        break;
-    case 'p':
-        print("Setting max power limit to %d mW\n", value);
-        SafetySetMaxPower(value / 1000.0);
         break;
     case 'v':
         print("Setting min voltage limit to %d mV\n", value);
         SafetySetMinVoltage(value / 1000.0);
+        break;
+    case 'p':
+        print("Setting max power limit to %d mW\n", value);
+        SafetySetMaxPower(value / 1000.0);
         break;
     default:
         print("Unknown limit type '%c'!\n", type);
@@ -182,6 +190,56 @@ static int do_limit(int argc, char *argv[])
     SafetyGetLimits(&max_current, &max_power, &min_voltage);
     print("Limits are now: max %.3f A, max %.3f W, min %.3f V\n", max_current, max_power, min_voltage); 
     
+    return 0;
+}
+
+static int do_cal(int argc, char *argv[])
+{
+    float current, voltage;
+    unsigned long time;
+    TMeasureCal cal;
+
+    // read current calibration value
+    if (!CalRead(&cal, sizeof(cal))) {
+        CalWrite(&cal, sizeof(cal));
+    }
+    print("Current calibration factor (I,V): %.6f %.6f\n", cal.cal_i, cal.cal_v);
+    
+    // read uncalibrated actual value
+    TMeasureCal cal0 = {1.0, 1.0};
+    MeasureCal(&cal0);
+    MeasureGet(&time, &current, &voltage);
+
+    char item = (argc > 1) ? argv[1][0] : '?'; 
+    int actual = (argc > 2) ? atoi(argv[2]) : 0;
+    
+    float ratio;
+    switch (item) {
+    case 'i':
+        ratio = actual / (1000.0 * current);
+        cal.cal_i = ratio;
+        break;
+    case 'v':
+        ratio = actual / (1000.0 * voltage);
+        cal.cal_v = ratio;
+        break;
+    case 'r':
+        print("Resetting calibration\n");
+        ratio = 1.0;
+        cal.cal_i = 1.0;
+        cal.cal_v = 1.0;
+        break;
+    default:
+        print("Invalid calibration item '%c'!\n", item);
+        return -1;
+    }
+    if ((ratio > 0.8) && (ratio < 1.2)) {
+        MeasureCal(&cal);
+        CalWrite(&cal, sizeof(cal));
+        print("Updated calibration factor (I,V): %.6f %.6f\n", cal.cal_i, cal.cal_v);
+    } else {
+        print("Value is off by %.f %%, ignoring!\n", 100.0 * (ratio - 1.0));
+    }
     return 0;
 }
 
@@ -195,7 +253,8 @@ const cmd_t commands[] = {
     {"led",     do_led,     "<mode> Set LED mode"},
     {"reset",   do_reset,   "Reset charge/energy counters"},
     {"log",     do_log,     "<interval> Starts logging with <interval> ms"},
-    {"limit",   do_limit,   "<c,p,v> <value> Set the current/power/voltage limit in mA/mW/mV"},
+    {"limit",   do_limit,   "<i,v,p> <value> Set the current/voltage/power limit in mA/mW/mV"},
+    {"cal",     do_cal,     "<i,v> <actual> calibrate current/voltage towards actual value (mA/mV)"},
     {NULL, NULL, NULL}
 };
 

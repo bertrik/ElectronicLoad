@@ -3,6 +3,8 @@
 
 #include "Arduino.h"
 
+static TMeasureCal calibration; 
+
 /**
  * Initialises the measurement system.
  */
@@ -10,6 +12,16 @@ void MeasureInit(void)
 {
     pinMode(PIN_MEASURE_A, INPUT_ANALOG);
     pinMode(PIN_MEASURE_V, INPUT_ANALOG);
+    calibration.cal_i = 1.0;
+    calibration.cal_v = 1.0;
+}
+
+/**
+ * Sets the calibration values.
+ */
+void MeasureCal(const TMeasureCal *cal)
+{
+    calibration = *cal;
 }
 
 /**
@@ -22,7 +34,7 @@ void MeasureInit(void)
 void MeasureGet(unsigned long *time, float *current, float *voltage)
 {
     *time = micros();
-    *current = 5.0 * analogRead(PIN_MEASURE_A) / 4096;
-    *voltage = 19.8 * analogRead(PIN_MEASURE_V) / 4096;
+    *current = calibration.cal_i * 5.0 * analogRead(PIN_MEASURE_A) / 4096;
+    *voltage = calibration.cal_v * 19.8 * analogRead(PIN_MEASURE_V) / 4096;
 }
 
