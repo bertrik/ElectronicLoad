@@ -4,7 +4,7 @@
 
 void PrintInit(void)
 {
-    Serial.begin();
+    Serial.begin(115200);
 }
 
 void print(const char *fmt, ...)
