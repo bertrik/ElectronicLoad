@@ -266,9 +266,6 @@ static int do_help(int argc, char *argv[])
 
 void loop()
 {
-    char c;
-    bool haveLine = false;
-    
     MeasureGet(&time, &current, &voltage);
     power = current * voltage;
     
@@ -288,7 +285,9 @@ void loop()
     LedUpdate(time, charge, energy);
     LoggingUpdate(time, curset, current, voltage, power, charge, energy);
 
+    bool haveLine = false;
     if (Serial.available()) {
+        char c;
         haveLine = EditLine(Serial.read(), &c);
         Serial.print(c);
     }
