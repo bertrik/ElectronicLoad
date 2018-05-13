@@ -36,6 +36,7 @@ void setup()
     CalInit();
     if (CalRead(&cal, sizeof(cal))) {
         MeasureCal(&cal);
+        CurrentCal(cal.cal_iset);
     }
 }
 
@@ -195,7 +196,7 @@ static int do_limit(int argc, char *argv[])
 
 static int do_cal(int argc, char *argv[])
 {
-    TMeasureCal cal0 = {1.0, 1.0};
+    TMeasureCal cal0 = {1.0, 1.0, 1.0};
     float current, voltage;
     unsigned long time;
     TMeasureCal cal;
@@ -205,7 +206,7 @@ static int do_cal(int argc, char *argv[])
         cal = cal0;
         CalWrite(&cal, sizeof(cal));
     }
-    print("Current calibration factor (I,V): %.6f %.6f\n", cal.cal_i, cal.cal_v);
+    print("Current calibration factor (Iset,I,V): %.6f %.6f %.6f\n", cal.cal_iset, cal.cal_i, cal.cal_v);
     
     // read uncalibrated actual value
     MeasureCal(&cal0);
@@ -218,6 +219,7 @@ static int do_cal(int argc, char *argv[])
     switch (item) {
     case 'i':
         ratio = actual / (1000.0 * current);
+        cal.cal_iset = actual / (1000.0 * CurrentGetValue());
         cal.cal_i = ratio;
         break;
     case 'v':
@@ -227,6 +229,7 @@ static int do_cal(int argc, char *argv[])
     case 'r':
         print("Resetting calibration\n");
         ratio = 1.0;
+        cal.cal_iset = 1.0;
         cal.cal_i = 1.0;
         cal.cal_v = 1.0;
         break;
@@ -234,13 +237,16 @@ static int do_cal(int argc, char *argv[])
         print("Invalid calibration item '%c'!\n", item);
         return -1;
     }
+    // calibrate current / voltage reading
     if ((ratio > 0.8) && (ratio < 1.2)) {
         MeasureCal(&cal);
+        CurrentCal(cal.cal_iset);
         CalWrite(&cal, sizeof(cal));
-        print("Updated calibration factor (I,V): %.6f %.6f\n", cal.cal_i, cal.cal_v);
+        print("Updated calibration factor (Iset,I,V): %.6f %.6f %.6f\n", cal.cal_iset, cal.cal_i, cal.cal_v);
     } else {
         print("Value is off by %.f %%, ignoring!\n", 100.0 * (ratio - 1.0));
     }
+    
     return 0;
 }
 

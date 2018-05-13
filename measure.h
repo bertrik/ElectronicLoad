@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 typedef struct {
+    float cal_iset;
     float cal_i;
     float cal_v;
 } TMeasureCal;
