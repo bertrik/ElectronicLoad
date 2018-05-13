@@ -26,16 +26,15 @@ float CurrentSetValue(float current)
         setting = current;
     }
 
-    int pwm = (int)(1024 * setting / 5.0);
+    int pwm = (int) (1024 * setting / 5.0);
 
     // MCU output does not go below ~4mV, causing ~6mA load current. 
-    if (setting<0.005){ // for currents below 5mA
-      // The pin is made input, the voltage divider pulls the voltage to 0mV and load current is 0mA.
-      pinMode(PIN_CURRENT_OUT, INPUT);
-    }
-    else{
-      pinMode(PIN_CURRENT_OUT, PWM);
-      pwmWrite(PIN_CURRENT_OUT, pwm);
+    if (setting < 0.005) {      // for currents below 5mA
+        // The pin is made input, the voltage divider pulls the voltage to 0mV and load current is 0mA.
+        pinMode(PIN_CURRENT_OUT, INPUT);
+    } else {
+        pinMode(PIN_CURRENT_OUT, PWM);
+        pwmWrite(PIN_CURRENT_OUT, pwm);
     }
 
     return setting;
