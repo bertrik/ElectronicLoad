@@ -195,18 +195,19 @@ static int do_limit(int argc, char *argv[])
 
 static int do_cal(int argc, char *argv[])
 {
+    TMeasureCal cal0 = {1.0, 1.0};
     float current, voltage;
     unsigned long time;
     TMeasureCal cal;
 
     // read current calibration value
     if (!CalRead(&cal, sizeof(cal))) {
+        cal = cal0;
         CalWrite(&cal, sizeof(cal));
     }
     print("Current calibration factor (I,V): %.6f %.6f\n", cal.cal_i, cal.cal_v);
     
     // read uncalibrated actual value
-    TMeasureCal cal0 = {1.0, 1.0};
     MeasureCal(&cal0);
     MeasureGet(&time, &current, &voltage);
 
