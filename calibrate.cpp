@@ -10,7 +10,7 @@
 
 typedef struct {
     char magic[4];
-    int len;
+    size_t len;
     uint8_t data[120];
 } TCalHeader;
 
@@ -38,7 +38,7 @@ static void eeprom_get(int address, void *data, int len)
 }
 
 
-bool CalRead(void *data, int len)
+bool CalRead(void *data, size_t len)
 {
     // read it
     eeprom_get(CAL_ADDR, &header, sizeof(header));
@@ -54,7 +54,7 @@ bool CalRead(void *data, int len)
     return true;
 }
 
-bool CalWrite(void *data, int len)
+bool CalWrite(void *data, size_t len)
 {
     if (len > sizeof(header.data)) {
         return false;
