@@ -219,7 +219,7 @@ static int do_cal(int argc, char *argv[])
     switch (item) {
     case 'i':
         ratio = actual / (1000.0 * current);
-        cal.cal_iset = actual / (1000.0 * CurrentGetValue());
+        cal.cal_iset = 1000.0 * CurrentGetValue() / actual;
         cal.cal_i = ratio;
         break;
     case 'v':
