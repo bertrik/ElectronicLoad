@@ -5,7 +5,7 @@
 
 static bool show_header;
 static int interval;
-static long lasttick;
+static unsigned long lasttick;
 
 void LoggingInit(void)
 {
