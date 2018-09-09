@@ -8,8 +8,15 @@ typedef enum {
     // constant power
     CP,
     // constant resistance
-    CR
+    CR,
+    // pulsed current
+    CM_PI
 } EControlMode;
+
+typedef struct {
+    int duration;
+    float current;
+} TPulsedCurrent;
 
 /**
  * Initializes the control module.
@@ -22,6 +29,14 @@ void ControlInit(void);
  * @param(in] newTarget the target value (e.g. current, power, resistance)
  */ 
 void ControlSetMode(EControlMode newMode, float newTarget);
+
+/**
+ * Configures and enabled pulsed current mode.
+ * 
+ * @param[in] num number of (duration, current) pairs
+ * @param[in] the pulse current pairs
+*/
+void ControlSetPulsedMode(int num, TPulsedCurrent *pulses);
 
 /**
  * @return a string describing the current control mode

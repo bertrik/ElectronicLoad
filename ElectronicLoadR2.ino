@@ -250,6 +250,29 @@ static int do_cal(int argc, char *argv[])
     return 0;
 }
 
+static int do_pulse(int argc, char *argv[])
+{
+    if ((argc < 3) || (argc % 2) != 1) {
+        print("Need pairs of time and current!\n");
+        return -1;
+    }
+
+    // parse time and current pairs
+    print("Configuring stepped current waveform:\n");
+    TPulsedCurrent pairs[50];
+    int step = 0;
+    for (int i = 1; i < argc; i += 2) {
+        pairs[step].duration = atoi(argv[i]);
+        pairs[step].current = atoi(argv[i + 1]) / 1000.0;
+        print("* %6d us at %.3f mA\n", pairs[step].duration, pairs[step].current);
+        step++;
+    }
+
+    // configure it
+    ControlSetPulsedMode(step, pairs);
+    return 0;
+}
+
 const cmd_t commands[] = {
     {"help",    do_help,    "Show help"},
     {"cc",      do_cc,      "<mA>, set constant current mode"},
@@ -262,6 +285,7 @@ const cmd_t commands[] = {
     {"log",     do_log,     "<interval> Starts logging with <interval> ms"},
     {"limit",   do_limit,   "<i,v,p> <value> Set the current/voltage/power limit in mA/mW/mV"},
     {"cal",     do_cal,     "<i,v> <actual> calibrate current/voltage towards actual value (mA/mV)"},
+    {"pulse",   do_pulse,   "[d, i]+ pulsed current, with pairs of duration (us) and current (ma)"},
     {NULL, NULL, NULL}
 };
 

@@ -1,5 +1,5 @@
 // maximum number of arguments (including command itself)
-#define CMD_MAX_ARGS 5
+#define CMD_MAX_ARGS 50
 
 // default result codes
 #define CMD_OK      0
