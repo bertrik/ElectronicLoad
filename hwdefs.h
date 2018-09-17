@@ -8,6 +8,6 @@
 
 /** absolute maximums */
 #define MAX_CURRENT     5.0
-#define MAX_POWER       18.0
+#define MAX_POWER       21.0
 #define MAX_VOLTAGE     19.8
 
