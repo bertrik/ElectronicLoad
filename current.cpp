@@ -53,6 +53,9 @@ float CurrentSetValue(float current)
     // set it
     if (have_dac) {
         int dacSetting = 4095 * setting * cal_iset / 5.0;
+        if (dacSetting > 4095) {
+            dacSetting = 4095;
+        }
         dac.setVoltage(dacSetting, false); 
     } else {
         int pwm = (int) (1024 * setting * cal_iset / 5.0);
