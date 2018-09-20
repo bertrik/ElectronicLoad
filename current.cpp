@@ -24,6 +24,7 @@ void CurrentInit(void)
     // initialise dac if present
     if (have_dac) {
         dac.begin(MCP4725_I2C_ADDR);
+        dac.setVoltage(0, true); // writes default setting (0) to eeprom, is used directly after power on.
     } else {
         pinMode(PIN_CURRENT_OUT, PWM);
         // following two lines set the PWM to 70 kHz
