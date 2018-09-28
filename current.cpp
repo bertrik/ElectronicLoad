@@ -43,7 +43,7 @@ void CurrentCal(float value)
 float CurrentSetValue(float current)
 {
     // limit current to range
-    if (current < 0.005) {
+    if (current < 0.0) {
         setting = 0.0;
     } else if (current > 5.0) {
         setting = 5.0;
