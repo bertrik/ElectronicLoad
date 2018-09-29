@@ -163,35 +163,37 @@ static int do_log(int argc, char *argv[])
 
 static int do_limit(int argc, char *argv[])
 {
+    int ret = 0;
     float max_current, max_power, min_voltage;
 
-    if (argc < 3) {
-        print("Please specify a limit type and a limit value\n");
-        return -1;
-    }
-    char type = argv[1][0];
-    int value = atoi(argv[2]);
-    switch (type) {
-    case 'i':
-        print("Setting max current limit to %d mA\n", value);
-        SafetySetMaxCurrent(value / 1000.0);
-        break;
-    case 'v':
-        print("Setting min voltage limit to %d mV\n", value);
-        SafetySetMinVoltage(value / 1000.0);
-        break;
-    case 'p':
-        print("Setting max power limit to %d mW\n", value);
-        SafetySetMaxPower(value / 1000.0);
-        break;
-    default:
-        print("Unknown limit type '%c'!\n", type);
-        return -1;
+    if (argc == 3) {
+        char type = argv[1][0];
+        int value = atoi(argv[2]);
+        switch (type) {
+        case 'i':
+            print("Setting max current limit to %d mA\n", value);
+            SafetySetMaxCurrent(value / 1000.0);
+            break;
+        case 'v':
+            print("Setting min voltage limit to %d mV\n", value);
+            SafetySetMinVoltage(value / 1000.0);
+            break;
+        case 'p':
+            print("Setting max power limit to %d mW\n", value);
+            SafetySetMaxPower(value / 1000.0);
+            break;
+        default:
+            print("Unknown limit type '%c'!\n", type);
+            ret = -1;
+        }
+    } else if (argc > 1) {
+        print("Please specify a limit type (i,v,p) and a limit value\n");
+        ret = -1;
     }
     SafetyGetLimits(&max_current, &max_power, &min_voltage);
-    print("Limits are now: max %.3f A, max %.3f W, min %.3f V\n", max_current, max_power, min_voltage); 
+    print("Limits are now:\nImax = %.3f A\nPmax = %.3f W\nVmin = %.3f V\n", max_current, max_power, min_voltage); 
     
-    return 0;
+    return ret;
 }
 
 static int do_cal(int argc, char *argv[])
