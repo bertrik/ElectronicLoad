@@ -16,10 +16,11 @@ static const cmd_t *find_cmd(const cmd_t * commands, const char *name)
 
 static int split(char *input, char *args[], int maxargs)
 {
-    char *p = input;
     int argc = 0;
-    while ((p != NULL) && (argc < maxargs)) {
-        args[argc++] = strsep(&p, " ");
+    char *next = strtok(input, " ");
+    while ((next != NULL) && (argc < maxargs)) {
+        args[argc++] = next;
+        next = strtok(NULL, " ");
     }
     return argc;
 }
